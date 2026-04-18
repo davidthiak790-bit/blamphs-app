@@ -2,21 +2,23 @@ import type { APIRoute } from 'astro';
 import { hashPassword, generateId, createSessionCookie } from '../../../lib/auth';
 
 function getDB(locals: any) {
-  return locals.DB 
-    ?? locals.runtime?.env?.DB 
-    ?? locals.runtime?.DB;
+  return locals.DB ?? locals.runtime?.env?.DB ?? locals.runtime?.DB;
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = getDB(locals);
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'DB not bound', locals: Object.keys(locals) }), { status: 500 });
+  if (!db) return new Response(JSON.stringify({ error: 'DB not bound' }), { status: 500 });
+
+  let body: { email?: string; password?: string; company?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
   }
 
-  const formData = await request.formData();
-  const email = formData.get('email')?.toString().toLowerCase();
-  const password = formData.get('password')?.toString();
-  const orgName = formData.get('company')?.toString();
+  const email = body.email?.toLowerCase().trim();
+  const password = body.password;
+  const orgName = body.company?.trim();
 
   if (!email || !password || !orgName) {
     return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });

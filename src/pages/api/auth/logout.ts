@@ -2,12 +2,10 @@ import type { APIRoute } from 'astro';
 import { clearSessionCookie } from '../../../lib/auth';
 
 function getDB(locals: any) {
-  return locals.DB 
-    ?? locals.runtime?.env?.DB 
-    ?? locals.runtime?.DB;
+  return locals.DB ?? locals.runtime?.env?.DB ?? locals.runtime?.DB;
 }
 
-export const POST: APIRoute = async ({ cookies, locals }) => {
+export const GET: APIRoute = async ({ cookies, locals }) => {
   const sessionId = cookies.get('session')?.value;
   const db = getDB(locals);
   if (sessionId && db) {

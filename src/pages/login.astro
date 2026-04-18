@@ -55,9 +55,13 @@ const title = "Sign In";
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
-          body: new FormData(form)
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: (form.elements.namedItem('email') as HTMLInputElement).value,
+            password: (form.elements.namedItem('password') as HTMLInputElement).value
+          })
         });
-        const data: { error?: string } = await res.json();
+        const data = await res.json();
         
         if (res.ok) window.location.href = '/dashboard';
         else throw new Error(data.error || 'Failed to sign in');
