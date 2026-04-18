@@ -1,19 +1,23 @@
 import { defineMiddleware } from 'astro:middleware';
 
+function getDB(locals: any) {
+  // Try multiple access patterns for Cloudflare Pages + Astro 5
+  return locals.DB 
+    ?? locals.runtime?.env?.DB 
+    ?? locals.runtime?.DB;
+}
+
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, cookies } = context;
+  const locals = context.locals as any;
   
-  // Astro 5 + Cloudflare Pages: bindings are in locals directly or via runtime.env
-  const runtime = (context.locals as any).runtime;
-  const db = runtime?.env?.DB ?? (context.locals as any).DB;
-  
-  (context.locals as any).user = null;
-  (context.locals as any).org = null;
+  const db = getDB(locals);
+  locals.user = null;
+  locals.org = null;
 
   const sessionId = cookies.get('session')?.value;
   if (!sessionId || !db) return next();
 
-  // Look up session + user + org
   const { results } = await db.prepare(`
     SELECT u.id, u.email, u.name, s.expires_at,
            o.id as org_id, o.name as org_name, o.plan as org_plan
@@ -27,9 +31,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const row = results?.[0] as any;
   if (row) {
     if (new Date(row.expires_at) > new Date()) {
-      (context.locals as any).user = { id: row.id, email: row.email, name: row.name };
+      locals.user = { id: row.id, email: row.email, name: row.name };
       if (row.org_id) {
-        (context.locals as any).org = { id: row.org_id, name: row.org_name, plan: row.org_plan };
+        locals.org = { id: row.org_id, name: row.org_name, plan: row.org_plan };
       }
     } else {
       await db.prepare('DELETE FROM sessions WHERE id = ?').bind(sessionId).run();
@@ -37,13 +41,12 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  // Route guard
   const url = new URL(request.url);
   const isProtected = url.pathname.startsWith('/dashboard') || url.pathname.startsWith('/settings');
-  if (isProtected && !(context.locals as any).user) {
+  if (isProtected && !locals.user) {
     return context.redirect('/login');
   }
-  if ((url.pathname === '/login' || url.pathname === '/signup') && (context.locals as any).user) {
+  if ((url.pathname === '/login' || url.pathname === '/signup') && locals.user) {
     return context.redirect('/dashboard');
   }
 
