@@ -8,5 +8,8 @@ export default defineConfig({
     imageService: 'cloudflare',
     platformProxy: { enabled: true }
   }),
-  integrations: [tailwind()]
+  integrations: [tailwind()],
+  security: {
+    checkOrigin: false
+  }
 });
