@@ -1,0 +1,78 @@
+---
+const title = "Create Account";
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>{title} | Blamphs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-navy-950 text-ink-100 font-sans antialiased min-h-screen flex items-center justify-center p-6">
+  
+  <div class="w-full max-w-md">
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-money-500 to-money-700 text-navy-950 font-black text-2xl mb-4">B</div>
+      <h1 class="text-3xl font-bold">Start saving tokens</h1>
+      <p class="text-ink-300 mt-2">14-day free pilot. No credit card required.</p>
+    </div>
+
+    <div class="bg-navy-900 border border-navy-800 rounded-2xl p-8">
+      <form id="signup-form" class="space-y-5">
+        <div>
+          <label class="block text-sm font-medium text-ink-200 mb-1">Work Email</label>
+          <input type="email" name="email" required class="w-full bg-navy-800 border border-navy-700 rounded-lg px-4 py-2.5 focus:border-money-500 focus:outline-none transition" placeholder="you@company.com" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-ink-200 mb-1">Company Name</label>
+          <input type="text" name="company" required class="w-full bg-navy-800 border border-navy-700 rounded-lg px-4 py-2.5 focus:border-money-500 focus:outline-none transition" placeholder="Acme Corp" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-ink-200 mb-1">Password</label>
+          <input type="password" name="password" required minlength="8" class="w-full bg-navy-800 border border-navy-700 rounded-lg px-4 py-2.5 focus:border-money-500 focus:outline-none transition" placeholder="••••••••" />
+        </div>
+        
+        <div id="error-msg" class="text-red-400 text-sm hidden"></div>
+
+        <button type="submit" id="submit-btn" class="w-full bg-money-500 hover:bg-money-400 text-navy-950 font-bold py-3 rounded-lg transition mt-4">
+          Create account
+        </button>
+      </form>
+      
+      <div class="mt-6 text-center text-sm text-ink-300">
+        Already have an account? <a href="/login" class="text-money-500 hover:text-money-400">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('signup-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target as HTMLFormElement;
+      const btn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const err = document.getElementById('error-msg')!;
+      
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+      err.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          body: new FormData(form)
+        });
+        const data = await res.json();
+        
+        if (res.ok) window.location.href = '/dashboard';
+        else throw new Error(data.error || 'Failed to sign up');
+      } catch (error: any) {
+        err.textContent = error.message;
+        err.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Create account';
+      }
+    });
+  </script>
+</body>
+</html>

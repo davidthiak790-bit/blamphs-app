@@ -1,0 +1,20 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+const user = Astro.locals.user;
+---
+<AppLayout title="Settings">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">Account Settings</h1>
+  </div>
+
+  <div class="bg-navy-900 border border-navy-800 rounded-xl p-8 max-w-2xl">
+    <h2 class="text-lg font-bold mb-6">Profile</h2>
+    <form class="space-y-5">
+      <div>
+        <label class="block text-sm font-medium text-ink-200 mb-1">Email Address</label>
+        <input type="email" disabled value={user?.email} class="w-full bg-navy-800/50 border border-navy-700 rounded-lg px-4 py-2.5 text-ink-400 cursor-not-allowed" />
+        <p class="text-xs text-ink-400 mt-1">Contact support to change your email.</p>
+      </div>
+    </form>
+  </div>
+</AppLayout>

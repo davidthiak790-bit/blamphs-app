@@ -1,0 +1,29 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+const org = Astro.locals.org;
+---
+<AppLayout title="Billing">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">Billing & Plans</h1>
+    <p class="text-ink-300 mt-1">Manage your subscription.</p>
+  </div>
+
+  <div class="bg-navy-900 border border-navy-800 rounded-xl p-8 max-w-2xl">
+    <div class="flex items-start justify-between mb-8">
+      <div>
+        <h2 class="text-lg font-bold">Current Plan</h2>
+        <p class="text-ink-300 text-sm mt-1">You are currently on the <span class="text-money-500 font-bold uppercase">{org?.plan}</span> plan.</p>
+      </div>
+      <span class="px-3 py-1 rounded bg-navy-800 text-money-500 text-xs font-bold uppercase tracking-wider">{org?.plan}</span>
+    </div>
+
+    <div class="space-y-4 pt-6 border-t border-navy-800">
+      <button class="w-full py-3 rounded-lg bg-money-500 text-navy-950 font-bold hover:bg-money-400 transition" disabled>
+        Upgrade Plan (Coming Sprint 2)
+      </button>
+      <button class="w-full py-3 rounded-lg border border-navy-600 text-ink-200 font-bold hover:border-money-500 transition" disabled>
+        Manage Billing Portal
+      </button>
+    </div>
+  </div>
+</AppLayout>

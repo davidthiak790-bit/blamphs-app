@@ -1,0 +1,32 @@
+---
+import AppLayout from '../layouts/AppLayout.astro';
+const org = Astro.locals.org;
+---
+<AppLayout title="Overview">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold">Overview</h1>
+    <p class="text-ink-300 mt-1">Live token analytics for {org?.name}</p>
+  </div>
+
+  <div class="grid md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-navy-900 border border-navy-800 rounded-xl p-6">
+      <div class="text-sm text-ink-300 mb-2">Total Spend (30d)</div>
+      <div class="text-3xl font-bold">A$0.00</div>
+    </div>
+    <div class="bg-navy-900 border border-navy-800 rounded-xl p-6">
+      <div class="text-sm text-ink-300 mb-2">Tokens Processed</div>
+      <div class="text-3xl font-bold">0</div>
+    </div>
+    <div class="bg-navy-900 border border-navy-800 rounded-xl p-6">
+      <div class="text-sm text-ink-300 mb-2">Estimated Waste</div>
+      <div class="text-3xl font-bold text-money-500">0%</div>
+    </div>
+  </div>
+
+  <div class="bg-navy-900 border border-navy-800 rounded-xl p-12 text-center">
+    <div class="text-5xl mb-4">🔌</div>
+    <h2 class="text-xl font-bold mb-2">Awaiting first tokens</h2>
+    <p class="text-ink-300 max-w-md mx-auto mb-6">Connect your Anthropic or OpenAI SDK to the Blamphs proxy to start seeing real-time cost analytics and waste diagnoses.</p>
+    <a href="/api-keys" class="inline-block px-4 py-2 rounded-lg bg-money-500 text-navy-950 font-semibold text-sm hover:bg-money-400 transition">Get Proxy Credentials</a>
+  </div>
+</AppLayout>

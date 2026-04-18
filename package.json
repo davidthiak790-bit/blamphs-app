@@ -1,0 +1,27 @@
+{
+  "name": "blamphs-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "d1:local": "wrangler d1 execute blamphs_db --local --file=./migrations/0000_schema.sql",
+    "d1:remote": "wrangler d1 execute blamphs_db --remote --file=./migrations/0000_schema.sql"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/cloudflare": "^12.0.0",
+    "@astrojs/tailwind": "^5.1.4",
+    "astro": "^5.0.0",
+    "bcryptjs": "^2.4.3",
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.7.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "wrangler": "^3.88.0"
+  }
+}
