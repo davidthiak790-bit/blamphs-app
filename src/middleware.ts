@@ -2,8 +2,10 @@ import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, cookies } = context;
-  const env = (context.locals as any).runtime?.env as any;
-  const db = env?.DB;
+  
+  // Astro 5 + Cloudflare Pages: bindings are in locals directly or via runtime.env
+  const runtime = (context.locals as any).runtime;
+  const db = runtime?.env?.DB ?? (context.locals as any).DB;
   
   (context.locals as any).user = null;
   (context.locals as any).org = null;
