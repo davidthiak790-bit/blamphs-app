@@ -1,13 +1,12 @@
 import { defineMiddleware } from 'astro:middleware';
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const { request, cookies, locals } = context;
-  const env = context.locals.runtime?.env as any;
+  const { request, cookies } = context;
+  const env = (context.locals as any).runtime?.env as any;
   const db = env?.DB;
   
-  if (db) locals.db = db;
-  locals.user = null;
-  locals.org = null;
+  (context.locals as any).user = null;
+  (context.locals as any).org = null;
 
   const sessionId = cookies.get('session')?.value;
   if (!sessionId || !db) return next();
@@ -26,12 +25,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const row = results?.[0] as any;
   if (row) {
     if (new Date(row.expires_at) > new Date()) {
-      locals.user = { id: row.id, email: row.email, name: row.name };
+      (context.locals as any).user = { id: row.id, email: row.email, name: row.name };
       if (row.org_id) {
-        locals.org = { id: row.org_id, name: row.org_name, plan: row.org_plan };
+        (context.locals as any).org = { id: row.org_id, name: row.org_name, plan: row.org_plan };
       }
     } else {
-      // Clean up expired
       await db.prepare('DELETE FROM sessions WHERE id = ?').bind(sessionId).run();
       cookies.delete('session');
     }
@@ -40,10 +38,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // Route guard
   const url = new URL(request.url);
   const isProtected = url.pathname.startsWith('/dashboard') || url.pathname.startsWith('/settings');
-  if (isProtected && !locals.user) {
+  if (isProtected && !(context.locals as any).user) {
     return context.redirect('/login');
   }
-  if ((url.pathname === '/login' || url.pathname === '/signup') && locals.user) {
+  if ((url.pathname === '/login' || url.pathname === '/signup') && (context.locals as any).user) {
     return context.redirect('/dashboard');
   }
 

@@ -57,7 +57,7 @@ const title = "Sign In";
           method: 'POST',
           body: new FormData(form)
         });
-        const data = await res.json();
+        const data: { error?: string } = await res.json();
         
         if (res.ok) window.location.href = '/dashboard';
         else throw new Error(data.error || 'Failed to sign in');
